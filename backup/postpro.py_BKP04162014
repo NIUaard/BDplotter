@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+# read and plot a set of line output from Astra (Xemit.*, Yemit.* and Zemit.*)
+
+# 
+import sys
+import os
+from bdplotter_pro import *
+
+BD_Init()
+
+# argument on the filename and rtun number
+arg = sys.argv 
+file = arg[1]
+
+#fileX= file + '.Xemit.'+run
+#fileY= file + '.Yemit.'+run
+#fileZ= file + '.Zemit.'+run
+
+print file
+#print fileY
+#print fileZ
+Nbins=21 
+print "Nbins=", Nbins
+#da=io.array_import.read_array('tgdata.dat')
+dt=np.dtype({'names':['x','y','z','px','py','pz','t','q','ref','tag'],'formats':[np.double,np.double,np.double,np.double,np.double,np.double,np.double,np.double,np.double,np.double]})
+PS=np.loadtxt(open(file))
+#, dtype=dt)
+N=len(PS)
+print N
+mc2=0.511e6
+# create coordinate adding the mean value
+x =(PS[1:,0]+PS[0,0])*1e3
+y =(PS[1:,1]+PS[0,1])*1e3
+z =(PS[1:,2]+PS[0,2])*1e3
+px=(PS[1:,3]+PS[0,3])/mc2
+py=(PS[1:,4]+PS[0,4])/mc2
+pz=(PS[1:,5]+PS[0,5])/mc2
+
+
+# figure 1 is xy density and histogram
+subplot (2,2,1)
+xmin = x.min()
+xmax = x.max()
+ymin = y.min()
+ymax = y.max()
+zmin = z.min()
+zmax = z.max()
+pxmin = px.min()
+pxmax = px.max()
+pymin = py.min()
+pymax = py.max()
+pzmin = pz.min()
+pzmax = pz.max()
+
+hexbin(x,y, cmap=cm.seismic)
+axis([xmin, xmax, ymin, ymax])
+xlabel('x (mm)', fontsize=18)
+ylabel('y (mm)', fontsize=18)
+
+subplot (2,2,2)
+hist(y, bins=Nbins, normed=1, histtype='step')
+xlabel('y (mm)', fontsize=18)
+ylabel('population', fontsize=18)
+
+subplot (2,2,3)
+hist(x, bins=Nbins, normed=1, histtype='step')
+xlabel('x (mm)', fontsize=18)
+ylabel('population', fontsize=18)
+
+# figure 2 is xpx density and histogram
+figure()
+subplot (2,2,1)
+
+hexbin(x,px, cmap=cm.jet)
+axis([xmin, xmax, pxmin, pxmax])
+xlabel('x (mm)', fontsize=18)
+ylabel('$\beta_x \gamma$', fontsize=18)
+
+subplot (2,2,2)
+hist(px, bins=121, normed=1, histtype='step')
+xlabel('px (eV/c)', fontsize=18)
+ylabel('population', fontsize=18)
+
+subplot (2,2,3)
+hist(y, bins=121, normed=1, histtype='step')
+xlabel('x (mm)', fontsize=18)
+ylabel('population', fontsize=18)
+
+# figure 3 is zpz density and histogram
+figure()
+subplot (2,2,1)
+
+hexbin(z,pz, cmap=cm.jet)
+axis([zmin, zmax, pzmin, pzmax])
+xlabel('y (mm)', fontsize=18)
+ylabel(r'\beta \gamma', fontsize=18)
+subplot (2,2,2)
+hist(pz, bins=121, normed=1, histtype='step')
+xlabel('px (eV/c)', fontsize=18)
+ylabel('population', fontsize=18)
+
+subplot (2,2,3)
+hist(z, bins=121, normed=1, histtype='step')
+xlabel('z (mm)', fontsize=18)
+ylabel('population', fontsize=18)
+
+# do this last to show all pics
+show()

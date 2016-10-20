@@ -1,0 +1,26 @@
+from BDplotterV102014Init import *
+import BDplotterV051415 as BD
+import sys
+
+arg = sys.argv 
+filename = arg[1]
+
+
+# load astra file
+PHSP=BD.LoadAstraPhaseSpace(filename)
+
+#print PHSP[0][]
+BD.DensityPlot(PHSP['x'],PHSP['y'],21)
+
+plt.figure()
+#BD.DensityPlot_w_Hprojec_Zeroed (PHSP['x'],PHSP['y'],21)
+
+# plot transverse phase space
+BD. DensityplotwProjec2x2(PHSP['x'],PHSP['y'],21)
+
+# plot longitudinal phase space
+#BD. DensityplotwProjec2x2(PHSP['z'],PHSP['pz'],21)
+
+
+# display everything
+plt.show()

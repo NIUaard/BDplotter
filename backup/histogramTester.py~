@@ -1,0 +1,25 @@
+#from pylab import *
+# Last modified PP, 03-23-2011
+
+import sys
+import os
+os.putenv ("PYTHONPATH","/opt/nicadd/contrib/piot/Local_Install/lib/python2.4/site-packages/")
+from pylab import *
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pylab as pl
+import scipy
+
+
+def BD_Init():
+   params = {'backend': 'ps',
+	  'axes.labelsize': 18,
+	  'text.fontsize': 18,
+	  'legend.fontsize': 18,
+	  'xtick.labelsize': 18,
+	  'ytick.labelsize': 18,
+	  'subplot.wspace': 0.8,
+	  'subplot.hspace': 0.8,
+	  'text.usetex': False}
+   plt.rcParams.update(params)
