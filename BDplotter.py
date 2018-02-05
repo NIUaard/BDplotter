@@ -311,6 +311,15 @@ def LoadElegantMag(filename):
                'formats':[ '|S15', '|S15', np.double, np.double]})
    X=np.loadtxt(open("tmpelegantmag"), dtype=sig)
    
+   
+def LoadElegantArb(filename,column):
+   '''
+    return the a vector with the column value where column is a acceptatble string -- WARNING: no error handlingnright now
+   '''
+   Mycommand = 'sddsprintout -noLabel -noTitle -col='+column+'   '+ filename +'  tmpelegant'
+   os.system (Mycommand)
+   X=np.loadtxt("tmpelegant")
+   
    return(X)
 
 ''' 
