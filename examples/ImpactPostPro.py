@@ -5,7 +5,6 @@ import sys
 arg = sys.argv 
 filename = arg[1]
 
-filename='fort.40'
 
 # load astra file
 PHSP=BD.LoadImpactPhaseSpace(filename)
