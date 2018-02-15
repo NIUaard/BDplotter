@@ -1,6 +1,16 @@
 '''
+BDplotter.py
+
+author: C. Prokop and P. Piot, 
+date: 02/27/2011 
+
+
 HISTORY:
+04/11/2017
+04/10/2017, PP: fixed an issue with slice-parameter calculation -- converted D to a np.array
 09/18/2016, PP: added eigen-emittance calculation (transverse only) in LoadSigma function
+04/10/2017, PP: fixed an issue with slice-parameter calculation -- converted D to a np.array
+01/01/2015, PP: this is a branchoff of CP last version of 2012
 
 '''
 
@@ -101,6 +111,10 @@ cdict['green'][-1] = (1, 0.0, 0)
 
 
 global beamcmap
+global mec2
+
+mec2 = 0.5109989461e6
+cms  = 299792458.0 
 
 beamcmap = LinearSegmentedColormap('name', cdict)
 
@@ -190,9 +204,9 @@ def LoadAstraSigma(rootname, run):
    eny=np.zeros ((len(S['z'])))
        
    for jj in range(len(S['z'])):
-      S4=[[S['x2'][jj],   S['xpx'][jj],  S['xy'][jj],  S['xpy'][jj]], \
+      S4=[[S['x2'][jj],   S['xpx'][jj],  S['xy'][jj],  S['xpy'][jj]],  \
           [S['xpx'][jj],  S['px2'][jj],  S['pxy'][jj], S['pxpy'][jj]], \
-          [S['xy'][jj],   S['pxy'][jj],  S['y2'][jj],  S['ypy'][jj]], \
+          [S['xy'][jj],   S['pxy'][jj],  S['y2'][jj],  S['ypy'][jj]],  \
           [S['xpy'][jj],  S['pxpy'][jj], S['ypy'][jj], S['py2'][jj]]]
        
       vals, vecs = la.eig(np.dot(J4,S4))
@@ -220,6 +234,7 @@ def LoadAstraPhaseSpace(filename):
    print keep_us
    PhSp=Ptmp[:][keep_us]
    return (PhSp)
+
 
 #---------------------------------------------------- ELEGANT
 def LoadElegantPhaseSpace(filename):
@@ -267,35 +282,32 @@ def LoadElegantSig(filename):
 
    Mycommand = 'sddsprintout -noLabel -noTitle -col=s -col=s1 -col=s2 -col=Sx  -col=Sxp -col=ecnx -col=s12  ' + filename + ' tmpeleganttwiss'
    os.system (Mycommand)
-   sig=np.dtype({'names':['z','t', 'avg', 'rms','rmsprime','emit','corr'],
+   sig=np.dtype({'names':['z','avg1', 'avg2', 'rms','rmsprime','emit','corr'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double, np.double]})
    X=np.loadtxt(open("tmpeleganttwiss"), dtype=sig)
-   X['t']=1./conversion_t_to_z*X['t']			   
-   X['rms']=1000.*X['rms']			   
-   X['emit']=1.e6*X['emit']			   
-   X['avg']=0.*X['avg']
+#   X['t']=1./conversion_t_to_z*X['z']			   
+   X['rms']=1.*X['rms']			   
+   X['emit']=1.*X['emit']			   
 
 
    Mycommand = 'sddsprintout -noLabel -noTitle -col=s -col=s1 -col=s2 -col=Sy  -col=Syp -col=ecny -col=s34  ' + filename + ' tmpeleganttwiss'
    os.system (Mycommand)
-   sig=np.dtype({'names':['z','t', 'avg', 'rms','rmsprime','emit','corr'],
+   sig=np.dtype({'names':['z','avg1', 'avg2', 'rms','rmsprime','emit','corr'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double, np.double]})
    Y=np.loadtxt(open("tmpeleganttwiss"), dtype=sig)
-   Y['t']=1./conversion_t_to_z*Y['t']			   
-   Y['rms']=1000.*Y['rms']			   
-   Y['emit']=1.e6*Y['emit']			   
-   Y['avg']=0.*Y['avg']
+#   Y['t']=1./conversion_t_to_z*Y['z']			   
+   Y['rms']=1.*Y['rms']			   
+   Y['emit']=1.*Y['emit']			   
 
 
    Mycommand = 'sddsprintout -noLabel -noTitle -col=s -col=s1 -col=s2 -col=Ss  -col=Sdelta -col=ecnx -col=s56  ' + filename + ' tmpeleganttwiss'
    os.system (Mycommand)
-   sig=np.dtype({'names':['z','t', 'avg', 'rms','rmsprime','emit','corr'],
+   sig=np.dtype({'names':['z','avg1', 'avg2', 'rms','rmsprime','emit','corr'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double, np.double]})
    Z=np.loadtxt(open("tmpeleganttwiss"), dtype=sig)
-   Z['t']=1./conversion_t_to_z*Z['t']			   
-   Z['rms']=1000.*Z['rms']			   
-   Z['emit']=1.e6*Z['emit']			   
-   Z['avg']=0.*Z['avg']
+#   Z['t']=1./conversion_t_to_z*Z['z']			   
+   Z['rms']=1.*Z['rms']			   
+   Z['emit']=1.*Z['emit']			   
 
 
 
@@ -311,16 +323,8 @@ def LoadElegantMag(filename):
                'formats':[ '|S15', '|S15', np.double, np.double]})
    X=np.loadtxt(open("tmpelegantmag"), dtype=sig)
    
-   
-def LoadElegantArb(filename,column):
-   '''
-    return the a vector with the column value where column is a acceptatble string -- WARNING: no error handlingnright now
-   '''
-   Mycommand = 'sddsprintout -noLabel -noTitle -col='+column+'   '+ filename +'  tmpelegant'
-   os.system (Mycommand)
-   X=np.loadtxt("tmpelegant")
-   
    return(X)
+
 
 #---------------------------------------------------- IMPACT-T
 # load impact phase space
@@ -359,9 +363,9 @@ def LoadImpactPhaseSpace(filename):
 def LoadImpactSig(rootname):
 # conversion of long. emittance to um
    keVmm2um=1.0
-   fileX= rootname + '.24'
-   fileY= rootname + '.25'
-   fileZ= rootname + '.26'
+   fileX= rootname + '_fort.24'
+   fileY= rootname + '_fort.25'
+   fileZ= rootname + '_fort.26'
 
    print fileX
    print fileY
@@ -431,6 +435,7 @@ def PlotEmit1plt(X,Y,Z):
    ax1.legend(loc='lower right')
    ax1.set_ylabel(r'transverse emittance ($\mu$m)', fontsize=22)
    ax1.set_xlabel(r'distance (m)', fontsize=22)
+   ax1.set_ylim(0,100)
    FormatLabelSci()
    ax2 = ax1.twinx()
    ax2.plot (Z['z'],Z['emit'],color='green', linewidth=2.0, label=r'$\gamma \epsilon_{z}$')
@@ -565,7 +570,8 @@ def DensityPlot(X,Y,Nbin, axis=None):
 # axis is a 4-tuple (xmin, xmax, ymin, ymax)
 #   plt.hexbin(x,y, cmap=plt.cm.hot, bins='log',gridsize=Nbin)
 #   plt.axis([xminplot, xmaxplot, yminplot, ymaxplot])
-   a=plt.hist2d(X,Y, bins=Nbin)
+#   a=plt.hist2d(X,Y, bins=Nbin)
+   a=plt.hist2d(X,Y, bins=Nbin, norm=LogNorm())
    if axis!=None:
       plt.axis([axis[0],axis[1],axis[2],axis[3]])
 #   , norm=LogNorm())
@@ -753,7 +759,7 @@ def UniformSliceAnalysis (xpxd,numbins,bunch_charge):
 	print max_z, min_z, numparts, numbins, binwidth
 
   #section to initialize the matrix that contains all of the values.  Data set, or really just a matrix?
-	sliceMatrix=np.zeros((numbins,14))
+	sliceMatrix2=np.zeros((numbins,14))
 
 	while index<numbins:
 		slice_floor=min_z + (index-0.5)*binwidth
@@ -762,11 +768,13 @@ def UniformSliceAnalysis (xpxd,numbins,bunch_charge):
 		this_slice=xpx[np.logical_and((xpx[:,4]<slice_ceiling),(xpx[:,4]>slice_floor))]
 		print "slice info:", index , slice_floor, slice_ceiling, len(this_slice)
 		D=SingleSliceAnalysis(this_slice,xpx,slice_floor,slice_ceiling,bunch_charge)
-		print D
-		sliceMatrix[index][:]=D
+		print D[:,0]
+		for jj in range(14):
+		    sliceMatrix2[int(index),jj]= float(D[jj,0])
+		    print float(D[jj,0])
 		index=index+1.0
 
-	return sliceMatrix
+	return sliceMatrix2
 
 
 def SingleSliceAnalysis(cut_xpx,full_xpx,zmin,zmax,bunch_charge):
@@ -775,7 +783,7 @@ def SingleSliceAnalysis(cut_xpx,full_xpx,zmin,zmax,bunch_charge):
 
 	zcenter=zmin+width/2.0
 
-
+	
 	slice_particles=len(cut_xpx)
 
 	slice_charge=bunch_charge*slice_particles/len(full_xpx)
@@ -801,6 +809,7 @@ def SingleSliceAnalysis(cut_xpx,full_xpx,zmin,zmax,bunch_charge):
 	x_centered=cut_xpx[:,0] - slice_xcen
 	xprime_centered=cut_xpx[:,1]/np.mean(cut_xpx[:,5])-np.mean(cut_xpx[:,1]/np.mean(cut_xpx[:,5]))
 
+	
 	x=cut_xpx[:,0]
 	xprime=cut_xpx[:,1]
 
@@ -824,10 +833,11 @@ def SingleSliceAnalysis(cut_xpx,full_xpx,zmin,zmax,bunch_charge):
 #	zprimedata=particleData['pz']/np.mean(particleData['pz'])-1
 
 
+	
 	emitnx=slice_beta*slice_pav*np.sqrt( np.mean(x_centered**2.0)*np.mean(xprime_centered**2.0)-np.mean(x_centered*xprime_centered)**2.0)
 	emitny=slice_beta*slice_pav*np.sqrt( np.mean(y_centered**2.0)*np.mean(yprime_centered**2.0)-np.mean(y_centered*yprime_centered)**2.0)
 	
-
+	
 	emitnz=slice_beta*slice_pav*np.sqrt( np.mean(z_centered**2.0)*np.mean(slice_delta**2.0)-np.mean(z_centered*slice_delta)**2.0)
 
 #	emitnx=slice_pav*sqrt( np.mean(x**2.0)*np.mean(xprime**2.0)-np.mean(x*xprime)**2.0)
@@ -838,8 +848,24 @@ def SingleSliceAnalysis(cut_xpx,full_xpx,zmin,zmax,bunch_charge):
 #	print std(x_centered), std(xprime_centered), std(y_centered), std(yprime_centered), std(cut_xpx[:,5])
 #	enx=
 #	eny=
+        Results=np.zeros((14,1))
+	Results[0] =zcenter
+	Results[1] =width
+	Results[2] =slice_particles
+	Results[3] =slice_charge
+	Results[4] =slice_current
+	Results[5] =slice_pav
+	Results[6] =slice_xcen
+	Results[7] =slice_ycen
+	Results[8] =emitnx
+	Results[9] =emitny
+	Results[10]=slice_energyspread
+	Results[11]=TBrightness
+	Results[12]=emitnz
+	Results[13]=FullBrightness
+
 ### This now needs to include some measure for the TOTAL brightness?  Philippe suggests emittance, but slice longitudinal emittance is kind of iffy?  Very few particles.
 #	return [zcenter, width, slice_particles, slice_charge, slice_current, slice_pav, slice_xcen, slice_ycen, emitnx, emitny, slice_energyspread]	
-	return [zcenter, width, slice_particles, slice_charge, slice_current, slice_pav, slice_xcen, slice_ycen, emitnx, emitny, slice_energyspread, TBrightness, emitnz, FullBrightness]
+#	return [zcenter, width, slice_particles, slice_charge, slice_current, slice_pav, slice_xcen, slice_ycen, emitnx, emitny, slice_energyspread, TBrightness, emitnz, FullBrightness]
 
-
+        return (Results)
