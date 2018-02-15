@@ -368,9 +368,14 @@ def LoadImpactPhaseSpace(filename):
 def LoadImpactSig(rootname):
 # conversion of long. emittance to um
    keVmm2um=1.0
-   fileX= rootname + '.24'
-   fileY= rootname + '.25'
-   fileZ= rootname + '.26'
+   if rootname=='fort':
+      fileX= rootname + '.24'
+      fileY= rootname + '.25'
+      fileZ= rootname + '.26'
+   else:
+      fileX= rootname + '_fort.24'
+      fileY= rootname + '_fort.25'
+      fileZ= rootname + '_fort.26'
 
    print fileX
    print fileY
