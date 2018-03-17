@@ -1,5 +1,7 @@
 '''
 HISTORY:
+01/22/2017, PP: added current function
+04/10/2017, PP: fixed an issue with slice-parameter calculation -- converted D to a np.array
 09/18/2016, PP: added eigen-emittance calculation (transverse only) in LoadSigma function
 
 '''
@@ -101,9 +103,10 @@ cdict['green'][-1] = (1, 0.0, 0)
 
 
 global beamcmap
+global cms 
 
 beamcmap = LinearSegmentedColormap('name', cdict)
-
+cms      = 299792458.0
 
 
 
@@ -782,7 +785,15 @@ def UniformSliceAnalysis (xpxd,numbins,bunch_charge):
 
 	return sliceMatrix
 
-
+def current (z, charge, Nbins):
+        '''
+	generate the current distribution I(A) vs z using Nbins
+	'''
+	Npart,s=histogram0(z,Nbins)
+	Npart=Npart/sum(Npart)*charge*cms/np.abs(s[1]-s[0])
+	return (Npart, s)
+	
+	
 def SingleSliceAnalysis(cut_xpx,full_xpx,zmin,zmax,bunch_charge):
 	cms=2.998e8
 	width=(zmax-zmin)
