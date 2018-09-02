@@ -14,6 +14,7 @@ import pylab as pyl
 import scipy.special as spe
 import scipy.optimize as opt
 from scipy import linalg as la
+from cosmetics import *
 
 import os 
 from matplotlib import rc
@@ -582,7 +583,7 @@ def DensityPlot(X,Y,Nbin, axis=None):
 # axis is a 4-tuple (xmin, xmax, ymin, ymax)
 #   plt.hexbin(x,y, cmap=plt.cm.hot, bins='log',gridsize=Nbin)
 #   plt.axis([xminplot, xmaxplot, yminplot, ymaxplot])
-   a=plt.hist2d(X,Y, bins=Nbin)
+   a=plt.hist2d(X,Y, bins=Nbin, cmap=beam_map)
    if axis!=None:
       plt.axis([axis[0],axis[1],axis[2],axis[3]])
 #   , norm=LogNorm())
@@ -691,8 +692,8 @@ def DensityPlot_w_proj(X,Y,Nbins,axis=None):
    yhist1 = yhist1/max(yhist1)
    yhist1 = xmin + (xmax-xmin)*0.3*yhist1
 #   plt.step(yhist0, xhist0, linewidth=2.5, color='red') # plot as step lines instead of bars
-   plt.plot(xhist0, yhist0, linewidth=2.5, color='red') # plot as step lines instead of bars
-   plt.plot(yhist1, xhist1, linewidth=2.5, color='red') # plot as step lines instead of bars
+   plt.plot(xhist0, yhist0, linewidth=1.5, color='red') # plot as step lines instead of bars
+   plt.plot(yhist1, xhist1, linewidth=1.5, color='red') # plot as step lines instead of bars
   
    plt.tight_layout()
    return(a)
