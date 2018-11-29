@@ -88,21 +88,21 @@ def LoadAstraEmit(rootname, run):
    fileY= rootname + '.Yemit.'+run
    fileZ= rootname + '.Zemit.'+run
    fileC= rootname + '.Cemit.'+run
-   print(fileX)
-   print(fileY)
-   print(fileZ)
+   print fileX
+   print fileY
+   print fileZ
 
 # load x,y,z emit
    uemit=np.dtype({'names':['z','t','avg','rms','rmsprime','emit','corr'],
                'formats':[np.double,np.double,np.double,np.double,
-                          np.double,np.double,np.double]})
+	                  np.double,np.double,np.double]})
    cemit=np.dtype({'names':['emit100x','emit95x','emit90x','emit80x',
                             'emit100y','emit95y','emit90y','emit80y',
                             'emit100z','emit95z','emit90z','emit80z'],
                 'formats':[np.double,np.double,np.double,np.double,
-                           np.double,np.double,np.double,np.double,
-                           np.double,np.double,np.double,np.double]})
-                           
+	                   np.double,np.double,np.double,np.double,
+	                   np.double,np.double,np.double,np.double]})
+			   
    X=np.loadtxt(open(fileX), dtype=uemit)
    Y=np.loadtxt(open(fileY), dtype=uemit)
    Z=np.loadtxt(open(fileZ), dtype=uemit)
@@ -118,23 +118,23 @@ def LoadAstraSigma(rootname, run):
 # conversion of long. emittance to um
    keVmm2um=1.0
    fileS= rootname + '.Sigma.'+run
-   print(fileS)
+   print fileS
 
 # load x,y,z emit
    sigma=np.dtype({'names':['z','gamma',
                             'x2','xpx', 'xy',  'xpy', 'xz',  'xpz',
-                                 'px2', 'pxy', 'pxpy','pxz', 'pxpz',
-                                        'y2',  'ypy', 'yz',  'ypz',
-                                               'py2', 'pyz', 'pypz',
-                                                      'z2' ,  'zpz',
-                                                              'pz2'],
+			         'px2', 'pxy', 'pxpy','pxz', 'pxpz',
+			                'y2',  'ypy', 'yz',  'ypz',
+					       'py2', 'pyz', 'pypz',
+					              'z2' ,  'zpz',
+					                      'pz2'],
                  'formats':[np.double,np.double,
-                            np.double,np.double,np.double,np.double,np.double,np.double,
-                                      np.double,np.double,np.double,np.double,np.double,
-                                                np.double,np.double,np.double,np.double,
-                                                          np.double,np.double,np.double,
-                                                                    np.double,np.double,
-                                                                              np.double]})
+		            np.double,np.double,np.double,np.double,np.double,np.double,
+		                      np.double,np.double,np.double,np.double,np.double,
+		                                np.double,np.double,np.double,np.double,
+		                                          np.double,np.double,np.double,
+		                                                    np.double,np.double,
+		                                                              np.double]})
    S=np.loadtxt(open(fileS), dtype=sigma)
 
    S4=np.zeros((4,4))
@@ -167,7 +167,7 @@ def LoadAstraPhaseSpace(filename):
 
    phase=np.dtype({'names':['x','y','z','px','py','pz','clock','charge','index','status'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double,
-                          np.double, np.double, np.integer, np.integer]})
+	                  np.double, np.double, np.integer, np.integer]})
 
    Ptmp=np.loadtxt(open(filename), dtype=phase)
    N=len(Ptmp['pz'])
@@ -175,7 +175,7 @@ def LoadAstraPhaseSpace(filename):
    Ptmp['z'][1:N]=Ptmp['z'][0]+Ptmp['z'][1:N]
 #   print np.shape(Ptmp)
    keep_us=np.where(Ptmp['status']>0)
-   print(keep_us)
+   print keep_us
    PhSp=Ptmp[:][keep_us]
    return (PhSp)
 
@@ -191,7 +191,7 @@ def LoadElegantPhaseSpace(filename):
    phase=np.dtype({'names':['x','y','z','px','py','pz'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double]})
 
-                              
+   			   
    Ptmp=np.loadtxt(open("tmpelegantphasespace"), dtype=phase)
    PhSp=Ptmp
    PhSp['z']=Ptmp['z']*conversion_t_to_z
@@ -206,7 +206,7 @@ def LoadElegantTwiss(filename):
    twiss=np.dtype({'names':['s','betax','alphax','betay','alphay','etax','etay'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double, np.double]})
 
-                              
+   			   
    TwissParam=np.loadtxt(open("tmpeleganttwiss"), dtype=twiss)
    return (TwissParam)
 
@@ -216,7 +216,7 @@ def LoadElegantTwiss(filename):
 #   mag=np.dtype({'names':['s','prof'],
 #               'formats':[np.double, np.double]})
 #
-#                              
+#   			   
 #   MagProf=np.loadtxt(open("tmpelegantmag"), dtype=mag)
 #   return (MagProf)
 
@@ -228,9 +228,9 @@ def LoadElegantSig(filename):
    sig=np.dtype({'names':['z','t', 'avg', 'rms','rmsprime','emit','corr'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double, np.double]})
    X=np.loadtxt(open("tmpeleganttwiss"), dtype=sig)
-   X['t']=1./conversion_t_to_z*X['t']                           
-   X['rms']=1000.*X['rms']                           
-   X['emit']=1.e6*X['emit']                           
+   X['t']=1./conversion_t_to_z*X['t']			   
+   X['rms']=1000.*X['rms']			   
+   X['emit']=1.e6*X['emit']			   
    X['avg']=0.*X['avg']
 
 
@@ -239,9 +239,9 @@ def LoadElegantSig(filename):
    sig=np.dtype({'names':['z','t', 'avg', 'rms','rmsprime','emit','corr'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double, np.double]})
    Y=np.loadtxt(open("tmpeleganttwiss"), dtype=sig)
-   Y['t']=1./conversion_t_to_z*Y['t']                           
-   Y['rms']=1000.*Y['rms']                           
-   Y['emit']=1.e6*Y['emit']                           
+   Y['t']=1./conversion_t_to_z*Y['t']			   
+   Y['rms']=1000.*Y['rms']			   
+   Y['emit']=1.e6*Y['emit']			   
    Y['avg']=0.*Y['avg']
 
 
@@ -250,9 +250,9 @@ def LoadElegantSig(filename):
    sig=np.dtype({'names':['z','t', 'avg', 'rms','rmsprime','emit','corr'],
                'formats':[np.double, np.double, np.double, np.double, np.double, np.double, np.double]})
    Z=np.loadtxt(open("tmpeleganttwiss"), dtype=sig)
-   Z['t']=1./conversion_t_to_z*Z['t']                           
-   Z['rms']=1000.*Z['rms']                           
-   Z['emit']=1.e6*Z['emit']                           
+   Z['t']=1./conversion_t_to_z*Z['t']			   
+   Z['rms']=1000.*Z['rms']			   
+   Z['emit']=1.e6*Z['emit']			   
    Z['avg']=0.*Z['avg']
 
 
@@ -284,16 +284,16 @@ def LoadElegantArb(filename,column):
 # load impact phase space
 def LoadImpactPhaseSpace(filename):
 
-   print(filename)
+   print filename
 
 # load x,y,z emit
    phsp=np.dtype({'names':['x','bgx','y','bgy','z','bgz'],
                'formats':[np.double,np.double,np.double,np.double,
-                          np.double,np.double]})
+	                  np.double,np.double]})
    phsp2=np.dtype({'names':['x','bgx','y','bgy','z','bgz','px', 'py','pz'],
                'formats':[np.double,np.double,np.double,np.double, np.double,np.double,
-                          np.double,np.double,np.double]})
-                             
+	                  np.double,np.double,np.double]})
+  			   
    X=np.loadtxt(open(filename), dtype=phsp)
    
    Y=np.zeros((len(X)), dtype=phsp2)
@@ -326,18 +326,18 @@ def LoadImpactSig(rootname):
       fileY= rootname + '_fort.25'
       fileZ= rootname + '_fort.26'
 
-   print(fileX)
-   print(fileY)
-   print(fileZ)
+   print fileX
+   print fileY
+   print fileZ
 
 # load x,y,z emit
    uemit=np.dtype({'names':['t','z','avg','rms','avgp','rmsprime','twiss','emit'],
                'formats':[np.double,np.double,np.double,np.double,
-                          np.double,np.double,np.double,np.double]})
+	                  np.double,np.double,np.double,np.double]})
    zemit=np.dtype({'names':['t','z','rms','avgp','rmsprime','twiss','emit'],
                'formats':[np.double,np.double,np.double,np.double,
-                          np.double,np.double,np.double]})
-                           
+	                  np.double,np.double,np.double]})
+			   
    X=np.loadtxt(open(fileX), dtype=uemit)
    Y=np.loadtxt(open(fileY), dtype=uemit)
    Z=np.loadtxt(open(fileZ), dtype=zemit)
@@ -565,7 +565,7 @@ def DensityplotwProjec2x2(X,Y,Nbins,axis=None):
    
    if axis!=None:
       MyAxis=axis
-      print(MyAxis)
+      print MyAxis
       DensityPlot(X,Y,Nbins, axis=MyAxis)
    else: 
       DensityPlot(X,Y,Nbins)
@@ -594,7 +594,7 @@ def DensityPlot_w_Hproj(X,Y,Nbins,axis=None):
       MyAxis=axis
       ymin=MyAxis[2]
       ymax=MyAxis[3]
-      print(MyAxis)
+      print MyAxis
       a=DensityPlot(X,Y,Nbins, axis=MyAxis)
    else: 
       a=DensityPlot(X,Y,Nbins)
@@ -619,7 +619,7 @@ def DensityPlot_w_proj(X,Y,Nbins,axis=None):
       xmax=MyAxis[1]
       ymin=MyAxis[2]
       ymax=MyAxis[3]
-      print(MyAxis)
+      print MyAxis
       a=DensityPlot(X,Y,Nbins, axis=MyAxis)
    else: 
       a=DensityPlot(X,Y,Nbins)
@@ -690,14 +690,14 @@ def Analysis (xpxd,bunch_charge):
      nemity = 666.
      nemitz = 666.  
    
-   print(nemitx, nemity, nemitz)
+   print nemitx, nemity, nemitz
    
 def UniformSliceAnalysis (xpxd,numbins,bunch_charge):
 # slice analysis from Chris Prokop (GlueTrack)
 ### bunchCharge is in Coulombs.  
         xpx=np.zeros((len(xpxd),6))
-        print(len(xpx))
-        
+	print len(xpx)
+	
         xpx[:,0]=xpxd['x']
         xpx[:,2]=xpxd['y']
         xpx[:,4]=xpxd['z']
@@ -707,110 +707,110 @@ def UniformSliceAnalysis (xpxd,numbins,bunch_charge):
 
 
         xpx[:,4]=xpx[:,4]-np.mean(xpx[:,4])
-        max_z=xpx[:,4].max()
-        min_z=xpx[:,4].min()
-        dz=max_z-min_z
-        numparts=len(xpx)
-        binwidth=dz/(1.0*(numbins-1.))
-        index=0.0
-        print(max_z, min_z, numparts, numbins, binwidth)
+	max_z=xpx[:,4].max()
+	min_z=xpx[:,4].min()
+	dz=max_z-min_z
+	numparts=len(xpx)
+	binwidth=dz/(1.0*(numbins-1.))
+	index=0.0
+	print max_z, min_z, numparts, numbins, binwidth
 
   #section to initialize the matrix that contains all of the values.  Data set, or really just a matrix?
-        sliceMatrix=np.zeros((numbins,14))
+	sliceMatrix=np.zeros((numbins,14))
 
-        while index<numbins:
-                slice_floor=min_z + (index-0.5)*binwidth
-                slice_ceiling=min_z + (index+0.5)*binwidth
-#                this_slice=where(logical_and(xxs[:,4]<slice_ceiling,xxs[:,4]>slice_floor),1,0)  # This is currently broken.
-                this_slice=xpx[np.logical_and((xpx[:,4]<slice_ceiling),(xpx[:,4]>slice_floor))]
-                print("slice info:", index , slice_floor, slice_ceiling, len(this_slice))
-                D=SingleSliceAnalysis(this_slice,xpx,slice_floor,slice_ceiling,bunch_charge)
-                print(D)
-                sliceMatrix[index][:]=D
-                index=index+1.0
+	while index<numbins:
+		slice_floor=min_z + (index-0.5)*binwidth
+		slice_ceiling=min_z + (index+0.5)*binwidth
+#		this_slice=where(logical_and(xxs[:,4]<slice_ceiling,xxs[:,4]>slice_floor),1,0)  # This is currently broken.
+		this_slice=xpx[np.logical_and((xpx[:,4]<slice_ceiling),(xpx[:,4]>slice_floor))]
+		print "slice info:", index , slice_floor, slice_ceiling, len(this_slice)
+		D=SingleSliceAnalysis(this_slice,xpx,slice_floor,slice_ceiling,bunch_charge)
+		print D
+		sliceMatrix[index][:]=D
+		index=index+1.0
 
-        return sliceMatrix
+	return sliceMatrix
 
 def current (z, charge, Nbins):
         '''
-        generate the current distribution I(A) vs z using Nbins
-        '''
-        Npart,s=histogram0(z,Nbins)
-        Npart=Npart/sum(Npart)*charge*cms/np.abs(s[1]-s[0])
-        return (Npart, s)
-        
-        
+	generate the current distribution I(A) vs z using Nbins
+	'''
+	Npart,s=histogram0(z,Nbins)
+	Npart=Npart/sum(Npart)*charge*cms/np.abs(s[1]-s[0])
+	return (Npart, s)
+	
+	
 def SingleSliceAnalysis(cut_xpx,full_xpx,zmin,zmax,bunch_charge):
-        cms=2.998e8
-        width=(zmax-zmin)
+	cms=2.998e8
+	width=(zmax-zmin)
 
-        zcenter=zmin+width/2.0
+	zcenter=zmin+width/2.0
 
 
-        slice_particles=len(cut_xpx)
+	slice_particles=len(cut_xpx)
 
-        slice_charge=bunch_charge*slice_particles/len(full_xpx)
+	slice_charge=bunch_charge*slice_particles/len(full_xpx)
 # 0 or 1 particles cause lots of issues.  1 Particle has 0 emittance.  Make sure dimensions match!
-#        if slice_particles<10:
-#                return [zcenter, width, slice_particles, slice_charge, slice_charge*cms/width, np.mean((cut_xpx[:,5])/511000.0), np.mean(cut_xpx[:,0]), np.mean(cut_xpx[:,2]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+#	if slice_particles<10:
+#		return [zcenter, width, slice_particles, slice_charge, slice_charge*cms/width, np.mean((cut_xpx[:,5])/511000.0), np.mean(cut_xpx[:,0]), np.mean(cut_xpx[:,2]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 
 
-        slice_current=slice_charge*cms/width
+	slice_current=slice_charge*cms/width
 
-        cut_momentum=(cut_xpx[:,5])
-        
-        slice_pav=np.mean(cut_momentum)
-        slice_beta=np.sqrt(1.0-1.0/slice_pav**2.0)
-
-
-        slice_xcen=np.mean(cut_xpx[:,0])
-        slice_ycen=np.mean(cut_xpx[:,2])
-
-        slice_energyspread=np.std(cut_xpx[:,5]/np.mean(cut_xpx[:,5]) - 1.0)        
-
-        x_centered=cut_xpx[:,0] - slice_xcen
-        xprime_centered=cut_xpx[:,1]/np.mean(cut_xpx[:,5])-np.mean(cut_xpx[:,1]/np.mean(cut_xpx[:,5]))
-
-        x=cut_xpx[:,0]
-        xprime=cut_xpx[:,1]
-
-        y=cut_xpx[:,2]
-        yprime=cut_xpx[:,3]
-
-        y_centered=cut_xpx[:,2] - slice_ycen
-        yprime_centered=cut_xpx[:,3]/np.mean(cut_xpx[:,5])-np.mean(cut_xpx[:,3]/np.mean(cut_xpx[:,5]))
-
-        z=cut_xpx[:,4]
-
-#        energy=cut_xpx[:,5]
-#        cut_momentum
-
-        z_centered=cut_xpx[:,4] - zcenter
-        slice_delta = cut_momentum/np.mean(cut_momentum)-1.0
+	cut_momentum=(cut_xpx[:,5])
+	
+	slice_pav=np.mean(cut_momentum)
+	slice_beta=np.sqrt(1.0-1.0/slice_pav**2.0)
 
 
+	slice_xcen=np.mean(cut_xpx[:,0])
+	slice_ycen=np.mean(cut_xpx[:,2])
 
-#        zdata=particleData['z']-np.mean(particleData['z'])
-#        zprimedata=particleData['pz']/np.mean(particleData['pz'])-1
+	slice_energyspread=np.std(cut_xpx[:,5]/np.mean(cut_xpx[:,5]) - 1.0)	
+
+	x_centered=cut_xpx[:,0] - slice_xcen
+	xprime_centered=cut_xpx[:,1]/np.mean(cut_xpx[:,5])-np.mean(cut_xpx[:,1]/np.mean(cut_xpx[:,5]))
+
+	x=cut_xpx[:,0]
+	xprime=cut_xpx[:,1]
+
+	y=cut_xpx[:,2]
+	yprime=cut_xpx[:,3]
+
+	y_centered=cut_xpx[:,2] - slice_ycen
+	yprime_centered=cut_xpx[:,3]/np.mean(cut_xpx[:,5])-np.mean(cut_xpx[:,3]/np.mean(cut_xpx[:,5]))
+
+	z=cut_xpx[:,4]
+
+#	energy=cut_xpx[:,5]
+#	cut_momentum
+
+	z_centered=cut_xpx[:,4] - zcenter
+	slice_delta = cut_momentum/np.mean(cut_momentum)-1.0
 
 
-        emitnx=slice_beta*slice_pav*np.sqrt( np.mean(x_centered**2.0)*np.mean(xprime_centered**2.0)-np.mean(x_centered*xprime_centered)**2.0)
-        emitny=slice_beta*slice_pav*np.sqrt( np.mean(y_centered**2.0)*np.mean(yprime_centered**2.0)-np.mean(y_centered*yprime_centered)**2.0)
-        
 
-        emitnz=slice_beta*slice_pav*np.sqrt( np.mean(z_centered**2.0)*np.mean(slice_delta**2.0)-np.mean(z_centered*slice_delta)**2.0)
+#	zdata=particleData['z']-np.mean(particleData['z'])
+#	zprimedata=particleData['pz']/np.mean(particleData['pz'])-1
 
-#        emitnx=slice_pav*sqrt( np.mean(x**2.0)*np.mean(xprime**2.0)-np.mean(x*xprime)**2.0)
-#        emitny=slice_pav*sqrt( np.mean(y**2.0)*np.mean(yprime**2.0)-np.mean(y*yprime)**2.0)
-        TBrightness=slice_current/(4.0*np.pi*np.pi*emitnx*emitny)
-        FullBrightness=slice_charge/(emitnx*emitny*emitnz)
-#        print np.mean(x_centered), np.mean(xprime_centered), np.mean(y_centered), np.mean(yprime_centered), np.mean(cut_xpx[:,5])
-#        print std(x_centered), std(xprime_centered), std(y_centered), std(yprime_centered), std(cut_xpx[:,5])
-#        enx=
-#        eny=
+
+	emitnx=slice_beta*slice_pav*np.sqrt( np.mean(x_centered**2.0)*np.mean(xprime_centered**2.0)-np.mean(x_centered*xprime_centered)**2.0)
+	emitny=slice_beta*slice_pav*np.sqrt( np.mean(y_centered**2.0)*np.mean(yprime_centered**2.0)-np.mean(y_centered*yprime_centered)**2.0)
+	
+
+	emitnz=slice_beta*slice_pav*np.sqrt( np.mean(z_centered**2.0)*np.mean(slice_delta**2.0)-np.mean(z_centered*slice_delta)**2.0)
+
+#	emitnx=slice_pav*sqrt( np.mean(x**2.0)*np.mean(xprime**2.0)-np.mean(x*xprime)**2.0)
+#	emitny=slice_pav*sqrt( np.mean(y**2.0)*np.mean(yprime**2.0)-np.mean(y*yprime)**2.0)
+	TBrightness=slice_current/(4.0*np.pi*np.pi*emitnx*emitny)
+	FullBrightness=slice_charge/(emitnx*emitny*emitnz)
+#	print np.mean(x_centered), np.mean(xprime_centered), np.mean(y_centered), np.mean(yprime_centered), np.mean(cut_xpx[:,5])
+#	print std(x_centered), std(xprime_centered), std(y_centered), std(yprime_centered), std(cut_xpx[:,5])
+#	enx=
+#	eny=
 ### This now needs to include some measure for the TOTAL brightness?  Philippe suggests emittance, but slice longitudinal emittance is kind of iffy?  Very few particles.
-#        return [zcenter, width, slice_particles, slice_charge, slice_current, slice_pav, slice_xcen, slice_ycen, emitnx, emitny, slice_energyspread]        
-        return [zcenter, width, slice_particles, slice_charge, slice_current, slice_pav, slice_xcen, slice_ycen, emitnx, emitny, slice_energyspread, TBrightness, emitnz, FullBrightness]
+#	return [zcenter, width, slice_particles, slice_charge, slice_current, slice_pav, slice_xcen, slice_ycen, emitnx, emitny, slice_energyspread]	
+	return [zcenter, width, slice_particles, slice_charge, slice_current, slice_pav, slice_xcen, slice_ycen, emitnx, emitny, slice_energyspread, TBrightness, emitnz, FullBrightness]
 
 
