@@ -1,3 +1,4 @@
+from __future__ import print_function #Python 2.7 compatibility
 '''
 Mimic Astra;s lineplot
 usage 

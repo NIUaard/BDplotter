@@ -1,3 +1,4 @@
+from __future__ import print_function #Python 2.7 compatibility
 from BDplotterInit import *
 import BDplotter as BD
 import sys
