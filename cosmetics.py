@@ -266,3 +266,14 @@ cm_data = [[1.0,1.0,1.0],
 
 beam_map = LinearSegmentedColormap.from_list('chris', cm_data)
 
+
+'''
+  OSIRIS like color map for particle density 
+'''
+
+colors1osiris = plt.cm.Blues(np.linspace(0., 1, 128))
+colors2osiris = plt.cm.YlOrRd_r(np.linspace(0, 1, 128))
+
+# combine them and build a new colormap
+colors = np.vstack((colors1osiris, colors2osiris))
+osir_map = mcolors.LinearSegmentedColormap.from_list('osiris', colors)
