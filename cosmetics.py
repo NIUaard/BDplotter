@@ -2,7 +2,10 @@
   definition for enhanced plotting format
 '''
 from matplotlib.colors import LinearSegmentedColormap
-
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import numpy as np 
+ 
 '''
   SLAC-DESY beam color map; original matlab map from C. Beherens (DESY)
   courtesy of T. Maxwell (SLAC), adapted to python by PP. 

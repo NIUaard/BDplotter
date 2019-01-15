@@ -3,6 +3,7 @@ HISTORY:
 01/22/2017, PP: added current function
 04/10/2017, PP: fixed an issue with slice-parameter calculation -- converted D to a np.array
 09/18/2016, PP: added eigen-emittance calculation (transverse only) in LoadSigma function
+01/12/2019, PP: added eigen-emittance calculation for IMPACT-T (fort.31 by Tianzhe Xu)
 
 '''
 
@@ -352,6 +353,50 @@ def LoadImpactSig(rootname):
 
    return (X,Y,Z)
 
+# load impact Sigma file
+# as of 01/12/2019 this is dumped in fort.31 and only contain the 4x4 transverse 
+# covariance beam matrix. 
+#
+def LoadImpactTSigma(fileS):
+
+# load x,y,z emit
+   sigma=np.dtype({'names':['t', 'z',
+                            'x2','xpx', 'xy',  'xpy', 
+                                 'px2', 'pxy', 'pxpy',
+                                        'y2',  'ypy', 
+                                               'py2'],
+                 'formats':[np.double,np.double,
+                            np.double,np.double,np.double,np.double,
+                                      np.double,np.double,np.double,
+                                                np.double,np.double,
+                                                          np.double]})
+   S=np.loadtxt(open(fileS), dtype=sigma)
+
+   
+   S4=np.zeros((4,4))
+   J4=np.zeros((4,4))
+   
+   J4=[[ 0., 1., 0., 0.], 
+       [-1., 0., 0., 0.],
+       [ 0., 0., 0., 1.],
+       [ 0., 0.,-1., 0.]]
+   enx=np.zeros ((len(S['z'])))
+   eny=np.zeros ((len(S['z'])))
+       
+   for jj in range(len(S['z'])):
+      S4=[[S['x2'][jj],   S['xpx'][jj],  S['xy'][jj],  S['xpy'][jj]], \
+          [S['xpx'][jj],  S['px2'][jj],  S['pxy'][jj], S['pxpy'][jj]], \
+          [S['xy'][jj],   S['pxy'][jj],  S['y2'][jj],  S['ypy'][jj]], \
+          [S['xpy'][jj],  S['pxpy'][jj], S['ypy'][jj], S['py2'][jj]]]
+       
+      vals, vecs = la.eig(np.dot(J4,S4))
+      
+      enx[jj]= np.abs(np.imag(vals[0]))
+      eny[jj]= np.abs(np.imag(vals[2]))
+
+   return (S, enx, eny)
+
+
 
 ''' 
 ########################################################################
@@ -405,17 +450,17 @@ def PlotEmit1plt(X,Y,Z):
    ax2.legend(loc='upper left')
    plt.tight_layout()
 
-def PlotEigenEmits(S):
+def PlotEigenEmits(S,enx,eny,enz):
 # S is the output of LoadAAstraSigma
    fig, ax1=plt.subplots()
-   ax1.plot (X['z'],X['emit'],'-', color='blue', linewidth=2.0, label=r'$\gamma \epsilon_{x}$')
-   ax1.plot (Y['z'],Y['emit'],'--', color='red', linewidth=2.0, label=r'$\gamma \epsilon_{y}$')
+   ax1.plot (S['z'],enx,'-', color='blue', linewidth=2.0, label=r'$\gamma \epsilon_{x}$')
+   ax1.plot (S['z'],eny,'--', color='red', linewidth=2.0, label=r'$\gamma \epsilon_{y}$')
    ax1.legend(loc='lower right')
    ax1.set_ylabel(r'transverse emittance ($\mu$m)', fontsize=22)
    ax1.set_xlabel(r'distance (m)', fontsize=22)
    FormatLabelSci()
    ax2 = ax1.twinx()
-   ax2.plot (Z['z'],Z['emit'],color='green', linewidth=2.0, label=r'$\gamma \epsilon_{z}$')
+   ax2.plot (S['z'],enz,color='green', linewidth=2.0, label=r'$\gamma \epsilon_{z}$')
    plt.xlabel('distance (m)', fontsize=22)
    ax2.set_ylabel(r'longitudinal emittance ($\mu$m)', fontsize=22, color="green")
    FormatLabelSci()
