@@ -4,8 +4,9 @@ HISTORY:
 04/10/2017, PP: fixed an issue with slice-parameter calculation -- converted D to a np.array
 09/18/2016, PP: added eigen-emittance calculation (transverse only) in LoadSigma function
 01/12/2019, PP: added eigen-emittance calculation for IMPACT-T (fort.31 by Tianzhe Xu)
-
+02/22/2019, PP: added IMPACT-Z function for Sigma loading 
 '''
+__version__ = "$Revision: 02/22/2019$"
 
 # pretty plot function
 
@@ -281,8 +282,8 @@ def LoadElegantArb(filename,column):
    
    return(X)
 
-#---------------------------------------------------- IMPACT-T
-# load impact phase space
+#---------------------------------------------------- IMPACT-T & Z
+# load impact phase space assumes ImpactT format 
 def LoadImpactPhaseSpace(filename):
 
    print(filename)
@@ -312,13 +313,18 @@ def LoadImpactPhaseSpace(filename):
    return (Y)
 
 
-
+# this was decommissioned on 02/22
+def LoadImpactSig(rootname):
+   print ("the function LoadImpactSig was removed")
+   print ("use LoadImpactTSig instead")
+   exit(-1)
 
 # load *emit file for the rootname and run number
-def LoadImpactSig(rootname):
+def LoadImpactTSig(rootname):
 # conversion of long. emittance to um
    keVmm2um=1.0
-   if rootname=='fort':
+
+   if rootname[-4:]=='fort':
       fileX= rootname + '.24'
       fileY= rootname + '.25'
       fileZ= rootname + '.26'
@@ -353,12 +359,70 @@ def LoadImpactSig(rootname):
 
    return (X,Y,Z)
 
-# load impact Sigma file
+# load *emit file for the rootname and run number
+# if fre='None' the bunch length and emnitance are in unit of degree
+# otherwise freq in Hz is use to convert degree into mm
+# restmass (in eV) used to convert longitudinal emittance from MeV in rad
+def LoadImpactZSig(rootname, freq='None', restmass='None'):
+# conversion of long. emittance to um
+   keVmm2um=1.0
+
+   if rootname[-4:]=='fort':
+      fileX= rootname + '.24'
+      fileY= rootname + '.25'
+      fileZ= rootname + '.26'
+   else:
+      fileX= rootname + '_fort.24'
+      fileY= rootname + '_fort.25'
+      fileZ= rootname + '_fort.26'
+
+   print(fileX)
+   print(fileY)
+   print(fileZ)
+
+# load x,y,z emit
+   uemit=np.dtype({'names':['z','avg','rms','avgp','rmsprime','twiss','emit'],
+               'formats':[np.double,np.double,np.double,np.double,
+                          np.double,np.double,np.double,np.double]})
+   zemit=np.dtype({'names':['z','avg','rms','avgp','rmsprime','twiss','emit'],
+               'formats':[np.double,np.double,np.double,np.double,
+                          np.double,np.double,np.double]})
+                           
+   X=np.loadtxt(open(fileX), dtype=uemit)
+   Y=np.loadtxt(open(fileY), dtype=uemit)
+   Z=np.loadtxt(open(fileZ), dtype=zemit)
+# check if Cemit file ie there
+# convert beam size in mm and emittance in um
+   X['rms'] =1e3*X['rms']
+   Y['rms'] =1e3*Y['rms']
+   X['emit']=1e6*X['emit']
+   Y['emit']=1e6*Y['emit']
+   if freq=='None':
+      Z['emit']=1e6*Z['emit']
+      Z['rms'] =1e3*Z['rms']
+   else:
+# convert into mm the bunch length in um the long. emittance   
+      deg2m=299792458./freq/360.
+      Z['emit']=1e3*Z['emit']*deg2m #emittance in mm-MeV
+      if restmass!='None':
+           Z['emit']=1e3*Z['emit']*1e6/(restmass)
+
+      Z['rms'] =1e3*Z['rms']*deg2m # bunch lengh in mm
+
+   return (X,Y,Z)
+
+# load impact Sigma file (same format for both ImpactT and ImpactZ)
 # as of 01/12/2019 this is dumped in fort.31 and only contain the 4x4 transverse 
 # covariance beam matrix. 
 #
-def LoadImpactTSigma(fileS):
+def LoadImpactSigma(rootname):
 
+   if rootname[-4:]=='fort':
+      fileS= rootname + '.31'
+   else:
+      fileS= rootname + '_fort.31'
+
+   print(fileS)
 # load x,y,z emit
    sigma=np.dtype({'names':['t', 'z',
                             'x2','xpx', 'xy',  'xpy', 
