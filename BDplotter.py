@@ -455,8 +455,8 @@ def LoadImpactSigma(rootname):
        
       vals, vecs = la.eig(np.dot(J4,S4))
       
-      enx[jj]= np.abs(np.imag(vals[0]))
-      eny[jj]= np.abs(np.imag(vals[2]))
+      enx[jj]= np.min(np.abs(np.imag(vals)))
+      eny[jj]= np.max(np.abs(np.imag(vals)))
 
    return (S, enx, eny)
 
