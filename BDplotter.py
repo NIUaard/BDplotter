@@ -269,7 +269,9 @@ def LoadElegantMag(filename):
    os.system (Mycommand)
    sig=np.dtype({'names':['elemname','elemtype', 'z', 'profile'],
                'formats':[ '|S15', '|S15', np.double, np.double]})
-   X=np.loadtxt(open("tmpelegantmag"), dtype=sig)
+   MagProf=np.loadtxt(open("tmpelegantmag"), dtype=sig)
+
+   return (MagProf)
    
    
 def LoadElegantArb(filename,column):
@@ -821,7 +823,7 @@ def UniformSliceAnalysis (xpxd,numbins,bunch_charge):
         dz=max_z-min_z
         numparts=len(xpx)
         binwidth=dz/(1.0*(numbins-1.))
-        index=0.0
+        index=0
         print(max_z, min_z, numparts, numbins, binwidth)
 
   #section to initialize the matrix that contains all of the values.  Data set, or really just a matrix?
@@ -836,7 +838,7 @@ def UniformSliceAnalysis (xpxd,numbins,bunch_charge):
                 D=SingleSliceAnalysis(this_slice,xpx,slice_floor,slice_ceiling,bunch_charge)
                 print(D)
                 sliceMatrix[index][:]=D
-                index=index+1.0
+                index=index+1
 
         return sliceMatrix
 
